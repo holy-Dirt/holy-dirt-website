@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Holy Dirt – Search for Truth</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/favicon.png" />
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Alef&display=swap" rel="stylesheet" />
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css" />
+    <!-- AOS (Animation on Scroll) CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+
+    <style>
+        /* --- Colors and Base --- */
+        :root {
+            --color-primary: #3498db;
+            /* כחול בינוני לכפתורים ו-Hover אפקט */
+            --color-primary-hover: #2980b9;
+            /* כהה מעט */
+            --color-secondary: #2C3E50;
+            /* כחול-כהה */
+            --color-light: #ecf0f1;
+            /* רקע אפור בהיר */
+            --color-white: #fff;
+            --color-grey: #7f8c8d;
+        }
+
+        body {
+            font-family: 'Alef', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-light);
+            color: var(--color-secondary);
+        }
+
+        /* Sticky Navbar */
+        .navbar-sticky {
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            background-color: rgba(44, 62, 80, 0.95);
+            /* #2C3E50 with slight opacity */
+        }
+
+        .navbar-brand img {
+            width: 40px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--color-light);
+            transition: color 0.2s;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--color-primary);
+        }
+
+        /* Hero with Gradient */
+        #hero {
+            position: relative;
+            min-height: 75vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--color-white);
+            background: linear-gradient(135deg, #3b3b3b 0%, var(--color-secondary) 100%);
+            overflow: hidden;
+        }
+
+        #hero .hero-content {
+            z-index: 1;
+            /* above the bike animation */
+            max-width: 700px;
+            margin: 0 20px;
+            padding: 60px 20px;
+        }
+
+        #hero .hero-logo {
+            width: 150px;
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s;
+        }
+
+        #hero .hero-logo:hover {
+            transform: scale(1.07);
+        }
+
+        #hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        #hero p {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+        }
+
+        .btn-hero {
+            background-color: var(--color-primary);
+            border-color: var(--color-primary-hover);
+            color: var(--color-white);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .btn-hero:hover {
+            background-color: var(--color-primary-hover);
+            border-color: var(--color-primary);
+            color: #fff;
+        }
+
+        /* Bike animation */
+        .bike-animation {
+            position: absolute;
+            bottom: 0;
+            left: -250px;
+            /* off-screen start */
+            width: 200px;
+            height: 120px;
+            background: url("images/bike.png") center/contain no-repeat;
+            z-index: 0;
+            /* behind hero text */
+            animation: rideBike 10s linear infinite;
+        }
+
+        @keyframes rideBike {
+            0% {
+                transform: translateX(-300px);
+            }
+
+            100% {
+                transform: translateX(150vw);
+            }
+        }
+
+        /* Divider shape after Hero */
+        .divider-bottom {
+            position: relative;
+            margin-top: -4px;
+        }
+
+        .divider-bottom svg {
+            display: block;
+            width: 100%;
+            height: 80px;
+        }
+
+        .divider-bottom .shape-fill {
+            fill: var(--color-light);
+        }
+
+        /* Section styling */
+        section {
+            padding: 60px 0;
+        }
+
+        section h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        /* About */
+        #about .container {
+            background-color: var(--color-white);
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        #about p {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        /* Instagram cards */
+        #instagram .card {
+            border: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+        }
+
+        #instagram .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        #instagram .card-body {
+            background-color: #fff;
+        }
+
+        /* Buttons in Instagram cards */
+        #instagram .btn-outline-dark {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+            transition: all 0.3s;
+        }
+
+        #instagram .btn-outline-dark:hover {
+            background-color: var(--color-primary);
+            border-color: var(--color-primary-hover);
+            color: #fff;
+        }
+
+        /* Testimonials */
+        .testimonial-card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 1.5rem;
+        }
+
+        .testimonial-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            color: #333;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .testimonial-author {
+            text-align: right;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        /* Review form (card) */
+        #review-form-section .card {
+            max-width: 600px;
+            margin: 0 auto;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        #review-form-section .card-body {
+            padding: 2rem;
+        }
+
+        #review-form-section .btn-primary {
+            background-color: var(--color-primary);
+            border-color: var(--color-primary-hover);
+            color: #fff;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        #review-form-section .btn-primary:hover {
+            background-color: var(--color-primary-hover);
+            border-color: var(--color-primary);
+            color: #fff;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, var(--color-secondary), #34495e);
+            color: var(--color-light);
+            text-align: center;
+            padding: 20px;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        /* WhatsApp Float */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+            background-color: #25d366;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .whatsapp-float i {
+            font-size: 32px;
+            color: #fff;
+            line-height: 60px;
+        }
+
+        .whatsapp-float:hover {
+            background-color: #20b455;
+            text-decoration: none;
+        }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-sticky">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand d-flex align-items-center" href="#hero">
+                <img src="images/logo.png" alt="Holy Dirt Logo" />
+                <span class="fw-bold ms-2">Holy Dirt</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#hero">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#instagram">Instagram</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#testimonials">Testimonials</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#review-form-section">Add Review</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section id="hero">
+        <div class="hero-content" data-aos="zoom-in">
+            <img src="images/logo.png" alt="Holy Dirt Logo" class="hero-logo" />
+            <h1>Welcome to Holy Dirt</h1>
+            <p>Search for Truth</p>
+            <a href="#about" class="btn btn-hero btn-lg">Learn More</a>
+        </div>
+
+        <!-- Motorcycle animation -->
+        <div class="bike-animation"></div>
+    </section>
+
+    <!-- Divider -->
+    <div class="divider-bottom">
+        <svg data-name="Layer 1" xmlns="https://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.28C186.62,38.52,94.07,6.18,0,0V120H1200V0C1104.35,4.92,
+          1001,35.48,880.9,52.36,736.72,73.83,576.84,82.06,421.62,64.79Z" class="shape-fill"></path>
+        </svg>
+    </div>
+
+    <!-- About -->
+    <section id="about">
+        <div class="container" data-aos="fade-up">
+            <h2 class="mb-5 text-center">About Us</h2>
+            <p>
+                We are Holy Dirt,
+
+            </p>
+        </div>
+    </section>
+
+    <!-- Instagram cards -->
+    <section id="instagram">
+        <div class="container">
+            <h2 class="mb-4 text-center" data-aos="fade-up">Our Instagram</h2>
+            <p class="text-center mb-5" data-aos="fade-up" data-aos-delay="100">
+                Follow us on
+                <a href="https://www.instagram.com/holydirttruth/" target="_blank">
+                    @holydirttruth
+                </a>
+            </p>
+
+            <div class="row g-4">
+                <div class="col-md-4" data-aos="zoom-in">
+                    <div class="card">
+                        <img src="images/insta1.jpg" class="card-img-top" alt="Post 1" />
+                        <div class="card-body">
+                            <h5 class="card-title">Ride with Us</h5>
+                            <p class="card-text">Capturing the best moments on the trail.</p>
+                            <a href="https://www.instagram.com/p/Cs5Nv0LLLPM/" target="_blank"
+                                class="btn btn-outline-dark">
+                                View Post
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="card">
+                        <img src="images/insta2.jpg" class="card-img-top" alt="Post 2" />
+                        <div class="card-body">
+                            <h5 class="card-title">Desert Adventure</h5>
+                            <p class="card-text">Our exploration to find hidden treasures.</p>
+                            <a href="https://www.instagram.com/p/DA2vjBON1x3/" target="_blank"
+                                class="btn btn-outline-dark">
+                                View Post
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="card">
+                        <img src="images/insta3.jpg" class="card-img-top" alt="Post 3" />
+                        <div class="card-body">
+                            <h5 class="card-title">Holy Dirt Journey</h5>
+                            <p class="card-text">Every trip is a story, come join us.</p>
+                            <a href="https://www.instagram.com/p/DCmR7O9q62B/" target="_blank"
+                                class="btn btn-outline-dark">
+                                View Post
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4" data-aos="fade-up">
+                <a href="https://www.instagram.com/holydirttruth/" class="btn btn-outline-dark" target="_blank">
+                    Visit Our Profile
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials">
+        <div class="container">
+            <h2 class="mb-5 text-center" data-aos="fade-up">Testimonials</h2>
+            <div class="row justify-content-center" id="userTestimonials">
+                <!-- Reviews from localStorage will appear here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Add Review -->
+    <section id="review-form-section">
+        <div class="container" data-aos="fade-up">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="mb-4 text-center">Add a Review</h2>
+                    <form id="reviewForm">
+                        <div class="mb-3">
+                            <label for="fullname" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="fullname" name="fullname" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="review" class="form-label">Your Review</label>
+                            <textarea class="form-control" id="review" name="review" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary px-4">
+                            Submit
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 Holy Dirt – All rights reserved</p>
+    </footer>
+
+    <!-- WhatsApp Float -->
+    <a href="https://wa.me/972528931994" class="whatsapp-float" target="_blank">
+        <i class="bi bi-whatsapp"></i>
+    </a>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init();
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const reviewForm = document.getElementById("reviewForm");
+            const userTestimonials = document.getElementById("userTestimonials");
+
+            // 1) טוענים מה-LocalStorage אם יש ביקורות
+            let storedReviews = localStorage.getItem("holyDirtUserReviews");
+            let userReviews = storedReviews ? JSON.parse(storedReviews) : [];
+
+            // פונקציה ליצירת כרטיס ביקורת
+            function createTestimonial(name, text) {
+                const colDiv = document.createElement("div");
+                colDiv.classList.add("col-md-6", "mb-4");
+                colDiv.setAttribute("data-aos", "fade-up");
+
+                const cardDiv = document.createElement("div");
+                cardDiv.classList.add("testimonial-card");
+
+                const textP = document.createElement("p");
+                textP.classList.add("testimonial-text");
+                textP.textContent = `“${text}”`;
+
+                cardDiv.appendChild(textP);
+
+                if (name) {
+                    const authorDiv = document.createElement("div");
+                    authorDiv.classList.add("testimonial-author");
+                    authorDiv.textContent = name;
+                    cardDiv.appendChild(authorDiv);
+                }
+
+                colDiv.appendChild(cardDiv);
+                return colDiv;
+            }
+
+            // 2) מציגים ביקורות קודמות (אם היו) – שלא יימחקו ברענון
+            userReviews.forEach(reviewObj => {
+                const newReviewElem = createTestimonial(reviewObj.name, reviewObj.text);
+                userTestimonials.appendChild(newReviewElem);
+            });
+
+            // 3) מאזינים לשליחת טופס, מוסיפים ביקורת חדשה ושומרים ב-LocalStorage
+            reviewForm.addEventListener("submit", (e) => {
+                e.preventDefault();
+                const fullname = document.getElementById("fullname").value;
+                const reviewText = document.getElementById("review").value;
+
+                // יוצרים אלמנט ביקורת
+                const newReviewElem = createTestimonial(fullname, reviewText);
+                userTestimonials.appendChild(newReviewElem);
+
+                // מוסיפים למערך ושומרים ב-LocalStorage
+                userReviews.push({ name: fullname, text: reviewText });
+                localStorage.setItem("holyDirtUserReviews", JSON.stringify(userReviews));
+
+                // איפוס הטופס
+                reviewForm.reset();
+            });
+        });
+    </script>
+</body>
+
+</html>
