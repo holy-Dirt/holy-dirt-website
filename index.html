@@ -317,6 +317,38 @@
         html {
             scroll-behavior: smooth;
         }
+
+        /* --- Responsive CSS --- */
+        @media (max-width: 768px) {
+            #hero h1 {
+                font-size: 2rem;
+                text-align: center;
+            }
+
+            #hero p {
+                font-size: 1rem;
+            }
+
+            .hero-logo {
+                width: 100px;
+            }
+
+            /* מרכזים את התוכן עבור מסכים קטנים */
+            .navbar-brand,
+            .navbar-nav {
+                text-align: center;
+            }
+
+            /* התאמת ריווח בכרטיסי ביקורת */
+            .testimonial-card {
+                padding: 1rem;
+            }
+
+            /* הקטנת ריווח של הסקשנים */
+            section {
+                padding: 40px 0;
+            }
+        }
     </style>
 </head>
 
@@ -372,8 +404,9 @@
     <!-- Divider -->
     <div class="divider-bottom">
         <svg data-name="Layer 1" xmlns="https://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M321.39,56.28C186.62,38.52,94.07,6.18,0,0V120H1200V0C1104.35,4.92,
-          1001,35.48,880.9,52.36,736.72,73.83,576.84,82.06,421.62,64.79Z" class="shape-fill"></path>
+            <path
+                d="M321.39,56.28C186.62,38.52,94.07,6.18,0,0V120H1200V0C1104.35,4.92,1001,35.48,880.9,52.36,736.72,73.83,576.84,82.06,421.62,64.79Z"
+                class="shape-fill"></path>
         </svg>
     </div>
 
@@ -383,7 +416,6 @@
             <h2 class="mb-5 text-center">About Us</h2>
             <p>
                 We are Holy Dirt,
-
             </p>
         </div>
     </section>
@@ -454,7 +486,7 @@
         <div class="container">
             <h2 class="mb-5 text-center" data-aos="fade-up">Testimonials</h2>
             <div class="row justify-content-center" id="userTestimonials">
-                <!-- Reviews from localStorage will appear here -->
+                <!-- Reviews from external API or localStorage will appear here -->
             </div>
         </div>
     </section>
@@ -503,10 +535,6 @@
             const reviewForm = document.getElementById("reviewForm");
             const userTestimonials = document.getElementById("userTestimonials");
 
-            // 1) טוענים מה-LocalStorage אם יש ביקורות
-            let storedReviews = localStorage.getItem("holyDirtUserReviews");
-            let userReviews = storedReviews ? JSON.parse(storedReviews) : [];
-
             // פונקציה ליצירת כרטיס ביקורת
             function createTestimonial(name, text) {
                 const colDiv = document.createElement("div");
@@ -533,25 +561,61 @@
                 return colDiv;
             }
 
-            // 2) מציגים ביקורות קודמות (אם היו) – שלא יימחקו ברענון
-            userReviews.forEach(reviewObj => {
-                const newReviewElem = createTestimonial(reviewObj.name, reviewObj.text);
-                userTestimonials.appendChild(newReviewElem);
-            });
+            // נסיון לטעון ביקורות משרת חיצוני
+            fetch('/api/reviews')
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(reviews => {
+                    reviews.forEach(reviewObj => {
+                        const newReviewElem = createTestimonial(reviewObj.name, reviewObj.text);
+                        userTestimonials.appendChild(newReviewElem);
+                    });
+                })
+                .catch(err => {
+                    console.error('Failed to load external reviews, falling back to localStorage:', err);
+                    // fallback - טעינת ביקורות מ-LocalStorage
+                    let storedReviews = localStorage.getItem("holyDirtUserReviews");
+                    let userReviews = storedReviews ? JSON.parse(storedReviews) : [];
+                    userReviews.forEach(reviewObj => {
+                        const newReviewElem = createTestimonial(reviewObj.name, reviewObj.text);
+                        userTestimonials.appendChild(newReviewElem);
+                    });
+                });
 
-            // 3) מאזינים לשליחת טופס, מוסיפים ביקורת חדשה ושומרים ב-LocalStorage
+            // מאזינים לשליחת טופס, מוסיפים ביקורת חדשה ושומרים אותה
             reviewForm.addEventListener("submit", (e) => {
                 e.preventDefault();
                 const fullname = document.getElementById("fullname").value;
                 const reviewText = document.getElementById("review").value;
 
-                // יוצרים אלמנט ביקורת
+                // יוצרים אלמנט ביקורת ומוסיפים לעמוד
                 const newReviewElem = createTestimonial(fullname, reviewText);
                 userTestimonials.appendChild(newReviewElem);
 
-                // מוסיפים למערך ושומרים ב-LocalStorage
-                userReviews.push({ name: fullname, text: reviewText });
-                localStorage.setItem("holyDirtUserReviews", JSON.stringify(userReviews));
+                // שליחת הביקורת לשרת חיצוני
+                fetch('/api/reviews', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: fullname, text: reviewText })
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            // במקרה של כשלון, נשמור גם ב-LocalStorage
+                            let storedReviews = localStorage.getItem("holyDirtUserReviews");
+                            let userReviews = storedReviews ? JSON.parse(storedReviews) : [];
+                            userReviews.push({ name: fullname, text: reviewText });
+                            localStorage.setItem("holyDirtUserReviews", JSON.stringify(userReviews));
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error submitting review to external server, saving locally:', err);
+                        let storedReviews = localStorage.getItem("holyDirtUserReviews");
+                        let userReviews = storedReviews ? JSON.parse(storedReviews) : [];
+                        userReviews.push({ name: fullname, text: reviewText });
+                        localStorage.setItem("holyDirtUserReviews", JSON.stringify(userReviews));
+                    });
 
                 // איפוס הטופס
                 reviewForm.reset();
